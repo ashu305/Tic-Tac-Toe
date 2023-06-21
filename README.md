@@ -1,4 +1,4 @@
-# Simple 2 Player Web App of Tic-Tac-Toe Game 
+# Simple 1/2 Player Web App of Tic-Tac-Toe Game 
 
 This project was bootstrapped with [Create React App]
 
