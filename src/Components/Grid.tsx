@@ -14,6 +14,8 @@ interface props {
   setTurn: (turn: number) => void;
   winner: number | null;
   setWinner: (winner: number | null) => void;
+  mode: number;
+  setMode: (mode: number) => void;
 }
 
 const Grid: React.FC<props> = ({
@@ -27,7 +29,31 @@ const Grid: React.FC<props> = ({
   setTurnIndex,
   winner,
   setWinner,
+  mode,
+  setMode,
 }) => {
+  useEffect(() => {
+    if (mode === 1 && turn === 1 && winner === null) {
+      setTimeout(() => {
+        const [row, col] = getComputerMove();
+        turnIndex[row][col] = 1;
+        let winner = checkWinner();
+        if (winner !== -2) {
+          setWinner(turn);
+          if (winner === -1) {
+            setPoints({ ...points, tie: points.tie + 1 });
+          } else if (winner === 0) {
+            setPoints({ ...points, tic: points.tic + 1 });
+          } else if (winner === 1) {
+            setPoints({ ...points, tac: points.tac + 1 });
+          }
+        }
+        setTurnIndex(turnIndex);
+        setTurn(turn === 1 ? 0 : 1);
+      }, 300);
+    }
+  }, [turn]);
+
   const checkWinner = (): number => {
     let tie = true;
     // Check rows
@@ -74,8 +100,7 @@ const Grid: React.FC<props> = ({
     return tie ? -1 : -2;
   };
 
-  const handelButtonClick = (row: number, col: number) => {
-    console.log(turnIndex);
+  const handelPlayerMove = (row: number, col: number) => {
     if (turn === 0) {
       turnIndex[row][col] = 0;
     } else {
@@ -95,6 +120,31 @@ const Grid: React.FC<props> = ({
     }
     setTurnIndex(turnIndex);
     setTurn(turn === 1 ? 0 : 1);
+  };
+
+  const getComputerMove = () => {
+    let row = Math.floor(Math.random() * 3);
+    let col = Math.floor(Math.random() * 3);
+    while (turnIndex[row][col] !== -1) {
+      row = Math.floor(Math.random() * 3);
+      col = Math.floor(Math.random() * 3);
+    }
+    return [row, col];
+  };
+
+  const forTwoPlayers = (row: number, col: number) => {
+    handelPlayerMove(row, col);
+  };
+
+  const forSinglePlayer = (row: number, col: number) => {
+    handelPlayerMove(row, col);
+  };
+
+  const handelButtonClick = (row: number, col: number) => {
+    if (mode === 2) forTwoPlayers(row, col);
+    else {
+      forSinglePlayer(row, col);
+    }
   };
 
   const GenerateGrid = () => {

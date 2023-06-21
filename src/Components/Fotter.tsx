@@ -6,9 +6,12 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 interface Props {
   points: { tic: number; tac: number; tie: number };
   setRestart: (restart: boolean) => void;
+  mode: number;
+  setMode: (mode: number) => void;
+  setPoints: (points: { tic: number; tac: number; tie: number }) => void;
 }
 
-const Fotter: React.FC<Props> = ({ points, setRestart }) => {
+const Fotter: React.FC<Props> = ({ points, setRestart, mode, setMode, setPoints }) => {
   return (
     <Wrapper>
       <div
@@ -33,11 +36,33 @@ const Fotter: React.FC<Props> = ({ points, setRestart }) => {
         />
         <Text sx={{ marginLeft: "2rem" }}>Tie:{points.tie}</Text>
       </div>
-      <Restart onClick={() => setRestart(true)}>
-        <Tooltip title="New Game" placement="top">
-          <RestartAltIcon sx={{ color: "#fff", fontSize: "1.7rem" }} />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          textAlign: "center",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Tooltip title={mode === 1 ? "vs AI" : "vs Friend"} placement="top">
+          <Mode
+            sx={{ marginRight: "0.3rem" }}
+            onClick={() => {
+              mode === 1 ? setMode(2) : setMode(1);
+              setPoints({ tic: 0, tac: 0, tie: 0 });
+              setRestart(true);
+            }}
+          >
+            {mode === 1 ? "1v" : "2v"}
+          </Mode>
         </Tooltip>
-      </Restart>
+        <Restart onClick={() => setRestart(true)}>
+          <Tooltip title="New Game" placement="top">
+            <RestartAltIcon sx={{ color: "#fff", fontSize: "1.7rem" }} />
+          </Tooltip>
+        </Restart>
+      </div>
     </Wrapper>
   );
 };
@@ -67,6 +92,20 @@ const Restart = styled(IconButton)({
   backgroundColor: "#474657",
   transition: "all 0.3s ease-in-out",
   "&:hover": {
-    backgroundColor: "#00acf0e2",
+    backgroundColor: "#8888888b",
+  },
+});
+
+const Mode = styled(Box)({
+  backgroundColor: "#474657",
+  transition: "all 0.3s ease-in-out",
+  fontcolor: "#fff",
+  fontSize: "1.5rem",
+  color: "#fff",
+  cursor: "pointer",
+  padding: "0.5rem",
+  borderRadius: "0.5rem",
+  "&:hover": {
+    backgroundColor: "#8888888b",
   },
 });
