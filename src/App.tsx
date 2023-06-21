@@ -163,12 +163,12 @@ const MySlider = styled(Slider)({
     },
   },
   "& .MuiSlider-valueLabel": {
-    color: "#000",
-    textEmphasisColor: "#000",
+    color: "#fff",
+    textEmphasisColor: "#fff",
     "& span": {
       backgroundColor: "transparent",
-      color: "#000",
-      textEmphasisColor: "#000",
+      color: "#fff",
+      textEmphasisColor: "#fff",
     },
   },
 
