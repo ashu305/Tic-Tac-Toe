@@ -34,7 +34,7 @@ const App = () => {
   const [turn, setTurn] = useState(0);
   const [winner, setWinner] = useState<number | null>(null);
   const [mode, setMode] = useState(1);
-  const [difficulty, setDifficulty] = useState(3);
+  const [difficulty, setDifficulty] = useState(2);
 
   useEffect(() => {
     console.log(difficulty);
@@ -86,6 +86,7 @@ const App = () => {
       >
         <div style={{ marginTop: "2rem" }}>
           <Grid
+            difficulty={difficulty}
             points={points}
             setPoints={setPoints}
             restart={restart}

@@ -2,6 +2,7 @@ import { Box, styled } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Separator from "./Separator";
 import TicButtonBox from "./TicButtonBox";
+import { checkWinner, getComputerMove } from "../Utils/Utils";
 
 interface props {
   points: { tic: number; tac: number; tie: number };
@@ -16,6 +17,7 @@ interface props {
   setWinner: (winner: number | null) => void;
   mode: number;
   setMode: (mode: number) => void;
+  difficulty: number;
 }
 
 const Grid: React.FC<props> = ({
@@ -31,13 +33,15 @@ const Grid: React.FC<props> = ({
   setWinner,
   mode,
   setMode,
+  difficulty,
 }) => {
   useEffect(() => {
     if (mode === 1 && turn === 1 && winner === null) {
+      let newMat = [...turnIndex];
       setTimeout(() => {
-        const [row, col] = getComputerMove();
-        turnIndex[row][col] = 1;
-        let winner = checkWinner();
+        const index = getComputerMove(difficulty, newMat);
+        newMat[Number(index[0])][Number(index[1])] = 1;
+        let winner = checkWinner(newMat, turn);
         if (winner !== -2) {
           setWinner(turn);
           if (winner === -1) {
@@ -48,57 +52,11 @@ const Grid: React.FC<props> = ({
             setPoints({ ...points, tac: points.tac + 1 });
           }
         }
-        setTurnIndex(turnIndex);
+        setTurnIndex(newMat);
         setTurn(turn === 1 ? 0 : 1);
       }, 300);
     }
   }, [turn]);
-
-  const checkWinner = (): number => {
-    let tie = true;
-    // Check rows
-    for (let row of turnIndex) {
-      if (
-        row.filter((value) => value === 0).length === 3 ||
-        row.filter((value) => value === 1).length === 3
-      ) {
-        return turn;
-      }
-      if (row.includes(-1)) {
-        tie = false;
-      }
-    }
-
-    // Check columns
-    for (let col = 0; col < 3; col++) {
-      if (
-        (turnIndex[0][col] === 0 && turnIndex[1][col] === 0 && turnIndex[2][col] === 0) ||
-        (turnIndex[0][col] === 1 && turnIndex[1][col] === 1 && turnIndex[2][col] === 1)
-      ) {
-        return turn;
-      }
-      if (turnIndex[col].includes(-1)) {
-        tie = false;
-      }
-    }
-
-    // Check diagonals
-    if (
-      (turnIndex[0][0] === 0 && turnIndex[1][1] === 0 && turnIndex[2][2] === 0) ||
-      (turnIndex[0][0] === 1 && turnIndex[1][1] === 1 && turnIndex[2][2] === 1)
-    ) {
-      return turn;
-    }
-
-    if (
-      (turnIndex[0][2] === 0 && turnIndex[1][1] === 0 && turnIndex[2][0] === 0) ||
-      (turnIndex[0][2] === 1 && turnIndex[1][1] === 1 && turnIndex[2][0] === 1)
-    ) {
-      return turn;
-    }
-
-    return tie ? -1 : -2;
-  };
 
   const handelPlayerMove = (row: number, col: number) => {
     if (turn === 0) {
@@ -106,7 +64,7 @@ const Grid: React.FC<props> = ({
     } else {
       turnIndex[row][col] = 1;
     }
-    let winner = checkWinner();
+    let winner = checkWinner(turnIndex, turn);
 
     if (winner !== -2) {
       setWinner(turn);
@@ -121,17 +79,6 @@ const Grid: React.FC<props> = ({
     setTurnIndex(turnIndex);
     setTurn(turn === 1 ? 0 : 1);
   };
-
-  const getComputerMove = () => {
-    let row = Math.floor(Math.random() * 3);
-    let col = Math.floor(Math.random() * 3);
-    while (turnIndex[row][col] !== -1) {
-      row = Math.floor(Math.random() * 3);
-      col = Math.floor(Math.random() * 3);
-    }
-    return [row, col];
-  };
-
   const forTwoPlayers = (row: number, col: number) => {
     handelPlayerMove(row, col);
   };
